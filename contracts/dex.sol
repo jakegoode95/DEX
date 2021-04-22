@@ -4,7 +4,10 @@ pragma experimental ABIEncoderV2;
 
 import "./wallet.sol";
 
+
 contract Dex is Wallet {
+
+    using SafeMath for uint256;
 
     enum Side {
         BUY,
@@ -14,7 +17,6 @@ contract Dex is Wallet {
     struct Order {
         uint id;
         address trader;
-        bool buyOrder;
         bytes32 ticker;
         uint amount;
         uint price;
@@ -23,13 +25,17 @@ contract Dex is Wallet {
     mapping(bytes32 => mapping(uint => Order[])) public orderBook;
 
     function getOrderBook(bytes32 ticker, Side side) view public returns (Order[] memory){
-    return orderBook[ticker][uint(side)];
+        return orderBook[ticker][uint(side)];
 
+        }
+
+    function createLimitOrder(Side side,uint amount,uint price) view public {
+        if (side == Side.BUY){
+            require(balances[msg.sender]["ETH"] >= amount.mul(price));
+        }
     }
-
-  //  function createLimitOrder() public {
-
-  //}
-
-
 }
+
+
+
+

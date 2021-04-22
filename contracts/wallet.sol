@@ -43,6 +43,9 @@ contract Wallet is Ownable {
         IERC20(tokenMapping[ticker].tokenAddress).transfer(msg.sender,amount);
     
     }
-
+    function depositEth() payable external{
+        balances[msg.sender][bytes32("ETH")] = balances[msg.sender][bytes32("ETH")].add(msg.value);   
+        
+        }
     
 }

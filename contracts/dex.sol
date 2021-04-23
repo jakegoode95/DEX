@@ -29,9 +29,9 @@ contract Dex is Wallet {
 
         }
 
-    function createLimitOrder(Side side,uint amount,uint price) view public {
-        if (side == Side.BUY){
-            require(balances[msg.sender]["ETH"] >= amount.mul(price));
+    function createLimitOrder(Side side,bytes32 ticker,uint amount,uint price) view public {
+         if (side == Side.BUY){
+        require(balances[msg.sender]["ETH"] >= amount.mul(price),"ETH balance is not sufficient");
         }
     }
 }

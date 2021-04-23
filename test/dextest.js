@@ -8,11 +8,11 @@ contract("Dex", accounts => {
         let dex = await Dex.deployed()
         let link = await Link.deployed()
         await truffleAssert.reverts(
-            dex.createLimitOrder(0, web3.utils.fromUtf8("LINK"), 10, 1)// amount = 10 , price = 1
+            dex.createLimitOrder(0, web3.utils.fromUtf8("LINK"), 1, 10),"reverts"// amount = 10 , price = 1
         )
-        dex.depositEth({value:10})
+        await dex.depositEth({value:10})
         await truffleAssert.passes(
-            dex.createLimitOrder(0, web3.utils.fromUtf8("LINK"), 10, 1)
+            dex.createLimitOrder(0, web3.utils.fromUtf8("LINK"), 10, 1),"passes"
         )
     })
     //The user must have enough tokens deposited such that token balance >= sell order amount
@@ -20,12 +20,13 @@ contract("Dex", accounts => {
         let dex = await Dex.deployed()
         let link = await Link.deployed()
         await truffleAssert.reverts(
-            dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1)
+            dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1),"reverts"
         )
         await link.approve(dex.address, 500);
+        await dex.addToken(web3.utils.fromUtf8("LINK"),link.address, {from: accounts[0]})
         await dex.deposit(10, web3.utils.fromUtf8("LINK"));
         await truffleAssert.passes(
-            dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1)
+            dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1),"passes"
         )
     })
     //The BUY order book should be ordered on price from highest to lowest starting at index 0

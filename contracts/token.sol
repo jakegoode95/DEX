@@ -7,7 +7,7 @@ import "../node_modules/@openzeppelin/contracts/token/ERC20/ERC20.sol";
 
     constructor() ERC20("Chainlink", "LINK") {
 
-       ERC20._mint(msg.sender, 1000);
+       _mint(msg.sender, 1000);
     }
     
 }

@@ -2,7 +2,7 @@ const Dex = artifacts.require("Dex")
 const Link = artifacts.require("Link")
 const truffleAssert = require('truffle-assertions');
 
-contract("Dex", accounts => {
+contract.skip("Dex", accounts => {
     //The user must have ETH deposited such that deposited eth >= buy order value
     it("should throw an error if ETH balance is too low when creating BUY limit order", async () => {
         let dex = await Dex.deployed()
@@ -25,8 +25,8 @@ contract("Dex", accounts => {
             dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1)// should revert because no allowance or link deposit
         )
         await link.approve(dex.address, 500);
-        await dex.addToken(web3.utils.fromUtf8("LINK"),link.address,{from: accounts[0]})// token needs to be added
-        await dex.deposit(10, web3.utils.fromUtf8("LINK"));
+        await dex.addToken(web3.utils.fromUtf8("LINK"),link.address, {from: accounts[0]})// token needs to be added
+        await dex.deposit(200, web3.utils.fromUtf8("LINK"));
         await truffleAssert.passes(
             dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 10, 1)// should work as allowance and deposit are set
         )
@@ -42,6 +42,7 @@ contract("Dex", accounts => {
         await dex.createLimitOrder(0, web3.utils.fromUtf8("LINK"), 1, 200)
 
         let orderbook = await dex.getOrderBook(web3.utils.fromUtf8("LINK"), 0);
+        assert(orderbook.length > 0);
         for (let i = 0; i < orderbook.length - 1; i++) {
             assert(orderbook[i].price >= orderbook[i+1].price, "not right order in buy book")
         }
@@ -55,10 +56,16 @@ contract("Dex", accounts => {
         await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 1, 100)
         await dex.createLimitOrder(1, web3.utils.fromUtf8("LINK"), 1, 200)
 
-        let orderbook = await dex.getOrderBook(web3.utils.fromUtf8("LINK"), 1);
+        let orderbook = await dex.getOrderBook(web3.utils.fromUtf8("LINK"), 0);
+        assert(orderbook.length > 0);
+        console.log(orderbook);
+
         for (let i = 0; i < orderbook.length - 1; i++) {
             assert(orderbook[i].price >= orderbook[i+1].price, "not right order in sell book")
         }
-    })
+    })  
+        
+       
+ 
 })
 
